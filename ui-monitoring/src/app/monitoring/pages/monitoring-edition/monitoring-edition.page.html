@@ -1,0 +1,8 @@
+<div class="page-header">
+  <h1 class="mat-subheading-2">Update a service monitoring</h1>
+  <button mat-button color="warn" (click)="delete()">
+    <mat-icon>delete</mat-icon>
+    <span>Delete</span>
+  </button>
+</div>
+<app-monitoring-form [current]="monitoring" (formSubmit)="update($event)"></app-monitoring-form>

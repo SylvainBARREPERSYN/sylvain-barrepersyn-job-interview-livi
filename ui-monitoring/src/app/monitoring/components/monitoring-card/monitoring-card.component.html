@@ -1,0 +1,24 @@
+<mat-card>
+  <mat-card-header [ngSwitch]="monitoring.status">
+    <mat-icon mat-card-avatar *ngSwitchCase="'OK'">pending</mat-icon>
+    <mat-icon mat-card-avatar *ngSwitchCase="'FAIL'">cancel</mat-icon>
+    <mat-card-title-group>
+      <mat-card-title>
+        <span class="fail" *ngIf="error">FAIL</span>
+        <span>{{ monitoring.name }}</span>
+      </mat-card-title>
+      <mat-card-subtitle>{{ monitoring.url }}</mat-card-subtitle>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-actions>
+    <span class="mat-caption audit">
+      Updated at {{ monitoring.updatedAt | date:'short' }}, Created at {{ monitoring.createdAt | date:'short' }}
+    </span>
+    <div>
+      <a mat-button color="primary" [routerLink]="['./', monitoring.id]">
+        <mat-icon>edit</mat-icon>
+        <span>Update</span>
+      </a>
+    </div>
+  </mat-card-actions>
+</mat-card>

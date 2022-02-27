@@ -1,0 +1,30 @@
+@use "@angular/material" as mat;
+
+mat-toolbar {
+  gap: 16px;
+  background: white;
+  @include mat.elevation(2);
+
+  .title-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    img.logo {
+      height: 36px;
+    }
+
+    .title{
+      display: flex;
+      gap: 8px;
+
+      &:before, &:after {
+        content: '•';
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+spring:
+  r2dbc:
+    url: r2dbc:mysql://localhost:3309/dev
+    username: dev
+    password: secret
+server:
+  port: 8081

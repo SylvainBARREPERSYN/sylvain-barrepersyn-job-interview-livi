@@ -1,0 +1,87 @@
+plugins {
+    id 'org.springframework.boot' version '2.6.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.asciidoctor.convert' version '1.5.8'
+    id 'com.epages.restdocs-api-spec' version '0.15.3'
+    id 'java'
+}
+
+group = 'com.kry.livi'
+version = '1.0.0'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
+    set('testcontainersVersion', "1.16.2")
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    runtimeOnly 'dev.miku:r2dbc-mysql'
+    runtimeOnly 'mysql:mysql-connector-java'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-webtestclient'
+    testImplementation 'com.epages:restdocs-api-spec-webtestclient:0.15.3'
+    testImplementation 'com.epages:restdocs-wiremock:0.8.0'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:mysql'
+    testImplementation 'org.testcontainers:r2dbc'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+    }
+}
+
+tasks.named('test') {
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+}
+
+tasks.named('asciidoctor') {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+openapi3 {
+    server = 'https://localhost:8080'
+    title = project.name
+    version = project.version
+    format = 'yaml'
+}
+
+postman {
+    title = project.name
+    version = project.version
+    baseUrl = 'https://localhost:8080'
+}
+
+task wiremockJar(type: Jar) {
+    description = 'Generates the jar file containing the wiremock stubs for your REST API.'
+    group = 'integration'
+    dependsOn project.tasks.test
+    from(snippetsDir) {
+        include '**/wiremock-stub.json'
+        into "wiremock/${project.name}/mappings"
+    }
+}
